@@ -1,0 +1,32 @@
+<!DOCTYPE html> <html> <head> <meta charset=utf-8> <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"> <meta http-equiv=Content-Security-Policy content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+  <script src="https://www.gstatic.com/firebasejs/3.6.0/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+  //ここに設定をコピー
+    };
+    firebase.initializeApp(config);
+    var provider = new firebase.auth.TwitterAuthProvider();
+
+    var loginState = localStorage['loginState'];
+    if(loginState == null) {
+      localStorage['loginState'] = 'redirect';
+      firebase.auth().signInWithRedirect(provider);
+    } else if(loginState == 'redirect') {
+      firebase.auth().getRedirectResult().then(function(result) {
+        //location.href="close.html?accessToken=" + result.credential.accessToken + "&secret=" + result.credential.secret;
+        location.href="close.html?uid=" + result.user.uid + "&displayName=" + result.user.displayName + "&photoURL=" + result.user.photoURL;
+      }).catch(function(error) {
+        alert("ログインに失敗しました:" + error.message);
+        location.href="close.html?error=true";
+      });
+      delete localStorage['loginState'];
+    } else {
+      delete localStorage['loginState'];
+    }
+
+
+  </script>
+</head><body><div>
+  ログインしています
+</div></body> </html>
